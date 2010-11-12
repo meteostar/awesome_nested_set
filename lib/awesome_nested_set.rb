@@ -506,6 +506,7 @@ module CollectiveIdea #:nodoc:
         def move_to(target, position)
           raise ActiveRecord::ActiveRecordError, "You cannot move a new node" if self.new_record?
           return if run_callbacks(:before_move) == false
+          return if self.respond_to?(:accept_move?) && !self.accept_move?(:target => target, :position => position)
           transaction do
             if target.is_a? self.class.base_class
               target.reload_nested_set
